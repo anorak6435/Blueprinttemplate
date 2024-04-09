@@ -1,30 +1,53 @@
 import dearpygui.dearpygui as dpg
 from jinja2 import Template
 import json
+from dataclasses import dataclass
 
 dpg.create_context()
+
+# MODEL
+
+@dataclass
+class Model:
+    name : str
+    template : str
+    variables : dict
+
+@dataclass
+class Program:
+    models : list[Model]
+
+
+# A global variable defining the current program being worked on
+prgrm = Program(models=[])
 
 # LOGIC
 
 def render_data():
     "render the template using the data"
-    plate = Template(dpg.get_value("template"))
-    data = json.loads(dpg.get_value("data"))
+    plate = Template(dpg.get_value("model_template"))
+    data = json.loads(dpg.get_value("model_data"))
     dpg.set_value("output", plate.render(data))
 
-
-
+def add_model():
+    global prgrm
+    mdl = Model(name=dpg.get_value("model_name"), template=dpg.get_value("model_template"), variables=json.loads(dpg.get_value("model_data")))
+    prgrm.models.append(mdl)
 
 # GUI
 
 
 with dpg.window(tag="Primary Window"):
-    dpg.add_text("Template")
-    dpg.add_input_text(tag="template", height=200, multiline=True)
+    with dpg.tab_bar():
+        with dpg.tab(label="Models"):
+            dpg.add_input_text(tag="model_name", label="model name")
+            dpg.add_text("Template")
+            dpg.add_input_text(tag="model_template", height=200, multiline=True)
 
-    dpg.add_text("Data")
-    dpg.add_input_text(tag="data", height=200, multiline=True)
+            dpg.add_text("Data")
+            dpg.add_input_text(tag="model_data", height=200, multiline=True)
 
+    dpg.add_button(label="Add", callback=add_model)
     dpg.add_button(label="Run", callback=render_data)
 
     dpg.add_text("Output")
