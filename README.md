@@ -7,6 +7,10 @@ This project will be about how easy it can be to convert general models of an id
 In this folder the output files for the different programs will be directed.
 This is for now a temporary use to make sure things are working.
 
+# Docs folder
+
+In this folder I will add markdown files explaining the different features of the program
+
 
 # FPA
 
